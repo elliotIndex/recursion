@@ -1,49 +1,45 @@
-// this is what you would do if you liked things to be easy:
-// var stringifyJSON = JSON.stringify;
+// stringifyJSON turns objects into JSON formatted strings
 
-// but you don't so you're going to write it from scratch:
+// Helper function to put quotes around strings
 var addString = function(curStr, newStr){
   return curStr + "\"" + newStr + "\"";
 }
+
 var stringifyJSON = function(obj) {
-  // your code goes here
-  // Handle Arrays
-  if (Array.isArray(obj)){
-    var out = "[";
-    var valType;
-    for (var i = 0; i < obj.length; i++) {
-      valType = typeof(obj[i]);
-      if (valType == "object") {
-        out += stringifyJSON(obj[i]);
-      } else if (valType == "string") {
-        out = addString(out, obj[i]);
-      } else {
-        out += obj[i];
+  // Handle null or undefined objects
+  if (!obj) { return "" + obj; }
+
+  var type = typeof(obj);
+
+  // Handle primitive types and strings
+  if (type != "object") {
+    return type == "string" ? addString("", obj) : obj.toString();
+  }
+
+  // Handle Arrays and Objects
+  var isArr = Array.isArray(obj);
+  var out = isArr ? "[" : "{"; // Add opening character
+  var valType;
+  for (var key in obj) {
+    if ( key != "undefined" && key != "functions") { // Not sure what "funcitons" is
+      // Insert key if obj is an object
+      if (!isArr) {
+        out = addString(out, key) + ":";
       }
-      out += ","
-    }
-    out = out.slice(0, -1);
-    out += "]";
-    return out;
-  } else {
-    // Handle objects
-    var out = "{";
-    var valType;
-    for (var key in obj) {
-      out = addString(out, key);
-      out += ":";
+
       valType = typeof(obj[key]);
+
       if (valType == "object") {
-        out += stringifyJSON(obj[key]);
+        out += stringifyJSON(obj[key]); // Recursive call
       } else if (valType == "string") {
         out = addString(out, obj[key]);
       } else {
         out += obj[key];
       }
-      out += ",";
+      out += ","; // comma separate values
     }
-    out = out.slice(0, -1);
-    out += "}";
-    return out;
   }
+  out = out[out.length-1] == "," ? out.slice(0, -1) : out; // Remove final comma
+  out += isArr ? "]" : "}"; // Add closing character
+  return out;
 };
