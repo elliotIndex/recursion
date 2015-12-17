@@ -1,6 +1,7 @@
 // Parsemaker returns a function that parses JSON formtted strings
 // Implementation based on notes from:
 // http://archive.oreilly.com/pub/a/javascript/excerpts/javascript-good-parts/json.html
+// Error image: http://imgur.com/gallery/G3Ftfz5
 var parseMaker = function() {
 
   var curIndex; // current index
