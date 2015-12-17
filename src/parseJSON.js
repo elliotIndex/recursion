@@ -1,12 +1,8 @@
-
-
 // Parsemaker returns a function that parses JSON formtted strings
+// Implementation based on notes from:
+// http://archive.oreilly.com/pub/a/javascript/excerpts/javascript-good-parts/json.html
 var parseMaker = function() {
-      // recursively call parse on objects, 
-      // Be able to handle all types of JSON data
-      	// includes objects, arrays, strings, numbers, bools, and null
 
-      // outer function that returns parse function
   var curIndex; // current index
   var curChar; // current character
   var jsonString; // JSON string being parsed
@@ -33,7 +29,6 @@ var parseMaker = function() {
     if (check && check !== curChar) {
       error("Expected '" +  + "' but saw '" + curChar + "'");
     }
-
     // Gets the next character, will return "" if there are no more characters
     curChar = jsonString.charAt(curIndex);
     curIndex += 1;
@@ -44,40 +39,33 @@ var parseMaker = function() {
   var number = function () {
 
     var numString = '';
-
     // handle negative numbers
     if (curChar === '-') {
       numString = '-';
       next('-');
     }
-
     // Get all digits before the decimal place or exponential modifier
     while (curChar >= '0' && curChar <= '9') {
       numString += curChar;
       next();
     }
-
     // Get decimal place
     if (curChar === '.') {
       numString += '.';
-
       // Gather digits after decimal place
       while (next() && curChar >= '0' && curChar <= '9') {
         numString += curChar;
       }
     }
-
     // Check for exponential notation
     if (curChar === 'e' || curChar === 'E') {
       numString += curChar;
       next();
-
       // Check for negative (or positive) exponent
       if (curChar === '-' || curChar === '+') {
         numString += curChar;
         next();
       }
-
       // Gather exponent
       while (curChar >= '0' && curChar <= '9') {
         numString += curChar;
